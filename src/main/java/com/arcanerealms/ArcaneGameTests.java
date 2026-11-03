@@ -14,6 +14,9 @@ public final class ArcaneGameTests {
         tests.register("requirements",()->ArcaneGameTests::requirements);
         tests.register("clone",()->ArcaneGameTests::cloneProgress);
         tests.register("protection",()->ArcaneGameTests::protection);
+        tests.register("duel_isolation",()->ArcaneGameTests::duelIsolation);
+        tests.register("countdown",()->ArcaneGameTests::countdown);
+        tests.register("progression",()->ArcaneGameTests::progression);
         tests.register(context.getModBusGroup());
     }
     private static ServerPlayer player(GameTestHelper h){return new ServerPlayer(h.getLevel().getServer(),h.getLevel(),new GameProfile(UUID.randomUUID(),"ArcaneTest"),ClientInformation.createDefault()){@Override public void sendSystemMessage(Component message){}};}
@@ -31,5 +34,32 @@ public final class ArcaneGameTests {
     }
     @GameTest public static void protection(GameTestHelper h){
         ServerPlayer a=player(h),b=player(h);h.assertFalse(Duels.allowed(a,b),"Protect outsiders");h.assertTrue(h.getLevel().getServer().getResourceManager().getResource(net.minecraft.resources.Identifier.parse("arcanerealms:dimension/arena.json")).isPresent(),"Arena resource exists");h.succeed();
+    }
+
+    @GameTest public static void duelIsolation(GameTestHelper h){
+        ServerPlayer a=player(h),b=player(h),outsider=player(h);
+        Duels.Fight f=new Duels.Fight(a,b,a.position(),false,-1);
+        Duels.FIGHTS.put(a.getUUID(),f);Duels.FIGHTS.put(b.getUUID(),f);
+        try {
+            h.assertFalse(Duels.allowed(outsider,a),"Outsider cannot attack participant");
+            h.assertFalse(Duels.allowed(a,outsider),"Participant cannot attack outsider");
+            boolean canceled=net.minecraftforge.event.entity.living.LivingAttackEvent.BUS.post(new net.minecraftforge.event.entity.living.LivingAttackEvent(a,a.damageSources().playerAttack(outsider),100));
+            h.assertTrue(canceled,"Reject outsider damage before armor consumption");
+            canceled=net.minecraftforge.event.entity.living.LivingAttackEvent.BUS.post(new net.minecraftforge.event.entity.living.LivingAttackEvent(a,a.damageSources().playerAttack(b),100));
+            h.assertTrue(canceled,"Reject vanilla opponent attacks");
+        } finally {Duels.FIGHTS.remove(a.getUUID());Duels.FIGHTS.remove(b.getUUID());}
+        h.succeed();
+    }
+    @GameTest public static void countdown(GameTestHelper h){
+        ServerPlayer a=player(h),b=player(h);PlayerMagic.unlock(a,"spark");
+        Duels.Fight f=new Duels.Fight(a,b,a.position(),false,-1);Duels.FIGHTS.put(a.getUUID(),f);Duels.FIGHTS.put(b.getUUID(),f);
+        try {h.assertFalse(PlayerMagic.spend(a,Spell.ALL.get("spark")),"Countdown must reject magic");h.assertTrue(PlayerMagic.value(a,"mana",0)==100,"Countdown cannot charge mana");}
+        finally {Duels.FIGHTS.remove(a.getUUID());Duels.FIGHTS.remove(b.getUUID());}h.succeed();
+    }
+    @GameTest public static void progression(GameTestHelper h){
+        ServerPlayer p=player(h);for(int n=0;n<5;n++)PlayerMagic.award(p,"fire");
+        h.assertTrue(PlayerMagic.level(p,"fire")==2,"Earn element level");h.assertTrue(PlayerMagic.value(p,"skill_points",0)==6,"Earn skill point");
+        h.assertTrue(PlayerMagic.unlock(p,"fireball")==0,"Tier alone cannot bypass parent requirement");
+        PlayerMagic.unlock(p,"spark");h.assertTrue(PlayerMagic.unlock(p,"fireball")==1,"Unlock advanced spell after parent");h.succeed();
     }
 }

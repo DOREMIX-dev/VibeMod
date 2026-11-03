@@ -1,4 +1,4 @@
-# Arcane Realms 0.83 — восстановленная тестовая версия
+# Arcane Realms 0.84 — восстановленная тестовая версия
 
 Minecraft Java 26.3 · Forge 66.1.2 · Java 25. Mod ID: `arcanerealms`, сохранён для совместимости.
 
@@ -27,8 +27,10 @@ K — книга. Нажмите название заклинания для и
 
 Установите Java 25 и Gradle 9.7.1. Выполните `gradle build runGameTestServer`. Результат — `build/libs/Arcane-Realms.jar`.
 Служебный JDK для launcher загружается через resolver. Интернет необходим.
-Клиент: `gradle runClient`; сервер: `gradle runServer`. Gradle Wrapper не восстановлен: бинарный файл прежнего архива недоступен.
+Клиент: `gradle runClient`; сервер: `gradle runServer`. Gradle Wrapper восстановлен; можно использовать ./gradlew вместо gradle.
 
 Официальный MDK: https://maven.minecraftforge.net/net/minecraftforge/forge/26.3-66.1.2/forge-26.3-66.1.2-mdk.zip
 
 Ограничения и статус тестов — VALIDATION.md. Версия повышается раз в пять изменений, журнал — CHANGELOG.md.
+
+Готовый JAR этой тестовой сборки: [dist/Arcane-Realms.jar](dist/Arcane-Realms.jar). Для скачивания откройте файл и нажмите Download raw file.

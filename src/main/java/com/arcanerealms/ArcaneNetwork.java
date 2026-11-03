@@ -32,5 +32,12 @@ public final class ArcaneNetwork {
             .consumerMainThread((m,c)->{clientData=m.data()==null?new CompoundTag():m.data();clientInvitation=m.invitation();clientTime=m.time();}).add();
     }
     public static void send(int action,String id){CHANNEL.send(new Action(action,id),PacketDistributor.SERVER.noArg());}
-    public static void sync(ServerPlayer p){CompoundTag d=PlayerMagic.data(p).copy();d.remove("duel_return");CHANNEL.send(new State(d,Duels.invitation(p),PlayerMagic.time(p)),PacketDistributor.PLAYER.with(p));}
+    public static void sync(ServerPlayer p){
+        CompoundTag source=PlayerMagic.data(p),d=new CompoundTag();
+        for(String key:new String[]{"mana","skill_points","rating","wins","losses","draws"})d.putInt(key,source.getIntOr(key,key.equals("rating")?1000:0));
+        for(String e:Spell.ELEMENTS){d.putInt("lvl_"+e,PlayerMagic.level(p,e));d.putInt("xp_"+e,source.getIntOr("xp_"+e,0));}
+        for(Spell spell:Spell.ALL.values()){d.putBoolean("unlocked_"+spell.id(),PlayerMagic.learned(p,spell.id()));d.putLong("cd_"+spell.id(),source.getLongOr("cd_"+spell.id(),0));}
+        for(int i=0;i<3;i++)d.putString("slot_"+i,source.getStringOr("slot_"+i,""));
+        CHANNEL.send(new State(d,Duels.invitation(p),PlayerMagic.time(p)),PacketDistributor.PLAYER.with(p));
+    }
 }

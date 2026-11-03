@@ -40,6 +40,7 @@ public final class ArcaneClient {
             for(int i=0;i<3&&page*3+i<list.size();i++){
                 Spell s=list.get(page*3+i);int y=52+i*36;
                 Button learn=Button.builder(Component.literal(s.name()),b->ArcaneNetwork.send(0,s.id())).bounds(left,y,190,20).build();
+                learn.active=!ArcaneNetwork.clientData.getBooleanOr("unlocked_"+s.id(),false);
                 learn.setTooltip(Tooltip.create(Component.literal("Уровень "+s.tier()+"; 1 очко. Требования: "+(s.prerequisites().isEmpty()?"нет":String.join(", ",s.prerequisites())))));addRenderableWidget(learn);
                 button("В слот "+(slot+1),left+194,y,106,()->ArcaneNetwork.send(7,slot+":"+s.id()));
             }
@@ -53,6 +54,7 @@ public final class ArcaneClient {
         @Override public void extractRenderState(GuiGraphicsExtractor g,int mx,int my,float dt){
             g.fill(0,0,width,height,0xe8151924);int left=width/2-150;var d=ArcaneNetwork.clientData;
             g.centeredText(font,"Arcane Realms · Очки: "+d.getIntOr("skill_points",5)+" · Рейтинг: "+d.getIntOr("rating",1000),width/2,7,0xffffd47f);super.extractRenderState(g,mx,my,dt);
+            String element=Spell.ELEMENTS.get(tab);if(!element.equals("combo"))g.text(font,"Ур. "+d.getIntOr("lvl_"+element,1)+" · Опыт "+d.getIntOr("xp_"+element,0)+"/"+Spell.xpNeeded(d.getIntOr("lvl_"+element,1)),left,18,0xffaaaaee);
             var list=Spell.ALL.values().stream().filter(s->s.element().equals(Spell.ELEMENTS.get(tab))).toList();
             for(int i=0;i<3&&page*3+i<list.size();i++){Spell s=list.get(page*3+i);boolean known=d.getBooleanOr("unlocked_"+s.id(),false);g.text(font,(known?"✓ ":"")+s.mana()+" маны · "+s.cooldown()+"с · ур. "+s.tier(),left+3,74+i*36,known?0xff89e9a6:0xffbbbbcc);}
             if(height>249)g.text(font,ArcaneNetwork.clientInvitation.isEmpty()?"Название — изучить; R/Z/X — магия.":"Вызов: "+ArcaneNetwork.clientInvitation,left,239,0xffe5e5ff);

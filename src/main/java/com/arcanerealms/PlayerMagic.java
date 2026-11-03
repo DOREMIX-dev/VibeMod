@@ -28,6 +28,8 @@ public final class PlayerMagic {
     }
     public static boolean spend(ServerPlayer p,Spell s){
         if(!p.isAlive()||p.isSpectator()||!learned(p,s.id())||!Duels.canCast(p))return false;
+        if(!s.element().equals("combo")&&level(p,s.element())<s.tier())return false;
+        for(String parent:s.prerequisites())if(!learned(p,parent))return false;
         CompoundTag d=data(p);long now=time(p);
         if(now<d.getLongOr("cd_"+s.id(),0)||now<d.getLongOr("global_cd",0))return false;
         if(value(p,"mana",100)<s.mana()){message(p,"Недостаточно маны.");return false;}
