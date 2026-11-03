@@ -1,0 +1,41 @@
+name: Build Arcane Realms
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.7.1'
+      - name: Build and test
+        run: gradle --no-daemon build runGameTestServer --console=plain
+      - name: Upload mod and source
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Arcane-Realms
+          path: |
+            build/libs/Arcane-Realms.jar
+            README.md
+            VALIDATION.md
+            CHANGELOG.md
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            build/reports/
+            build/test-results/
+            build/gametest.xml
+            run/logs/

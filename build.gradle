@@ -1,0 +1,36 @@
+plugins { id 'java'; id 'net.minecraftforge.gradle' version '7.0.40' }
+group = 'com.arcanerealms'
+version = file('VERSION').text.trim()
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+minecraft {
+    runs {
+        configureEach {
+            workingDir = layout.projectDirectory.dir('run')
+            systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
+            systemProperty 'forge.enabledGameTestNamespaces', 'arcanerealms'
+        }
+        register('client') { workingDir = layout.projectDirectory.dir('run-client') }
+        register('server') { workingDir = layout.projectDirectory.dir('run-server'); args '--nogui' }
+        register('gameTestServer') { args '--tests', 'arcanerealms:*', '--report', '../build/gametest.xml' }
+    }
+}
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
+}
+dependencies {
+    implementation minecraft.dependency('net.minecraftforge:forge:26.3-66.1.2')
+    annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.6'
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+test { useJUnitPlatform() }
+base { archivesName = 'Arcane-Realms' }
+jar {
+    archiveFileName = 'Arcane-Realms.jar'
+    manifest { attributes('Implementation-Version': project.version) }
+}

@@ -1,0 +1,20 @@
+modLoader="javafml"
+loaderVersion="[66,)"
+license="MIT"
+[[mods]]
+modId="arcanerealms"
+version="${file.jarVersion}"
+displayName="Arcane Realms"
+description='''Пять стихий, прогрессия и согласованные магические дуэли. Тестовая сборка.'''
+[[dependencies.arcanerealms]]
+modId="forge"
+mandatory=true
+versionRange="[66.1.2,67)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.arcanerealms]]
+modId="minecraft"
+mandatory=true
+versionRange="[26.3,26.4)"
+ordering="NONE"
+side="BOTH"
