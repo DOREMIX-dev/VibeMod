@@ -1,0 +1,47 @@
+[
+  {
+    "question": "КИНО И СЕРИАЛЫ / 300",
+    "stage": "ответ",
+    "file": "Audio/vader_reveal.mp3"
+  },
+  {
+    "question": "КИНО И СЕРИАЛЫ / 500",
+    "stage": "ответ",
+    "file": "Video/matrix_reveal.mp4"
+  },
+  {
+    "question": "МУЗЫКА / 100",
+    "stage": "ответ",
+    "file": "Audio/billie_jean.mp3"
+  },
+  {
+    "question": "МУЗЫКА / 200",
+    "stage": "ответ",
+    "file": "Audio/rickroll.mp3"
+  },
+  {
+    "question": "МУЗЫКА / 300",
+    "stage": "ответ",
+    "file": "Audio/kukla_kolduna.mp3"
+  },
+  {
+    "question": "МУЗЫКА / 400",
+    "stage": "ответ",
+    "file": "Audio/gruppa_krovi.mp3"
+  },
+  {
+    "question": "МУЗЫКА / 500",
+    "stage": "вопрос",
+    "file": "Audio/tewiq_question.mp3"
+  },
+  {
+    "question": "МУЗЫКА / 500",
+    "stage": "ответ",
+    "file": "Audio/tewiq_reveal.mp3"
+  },
+  {
+    "question": "ИНТЕРНЕТ-МЕМЫ / 200",
+    "stage": "ответ",
+    "file": "Audio/bear_car.mp3"
+  }
+]
